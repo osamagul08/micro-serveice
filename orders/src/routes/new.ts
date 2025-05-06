@@ -3,11 +3,13 @@ import express, { Request, Response } from "express";
 import {
   BadRequestError,
   NotFoundError,
+  OrderStatus,
   requireAuth,
   validateRequest,
 } from "@rallycoding/common";
 import { Ticket } from "../models/ticket";
 import { body } from "express-validator";
+import { Order } from "../models/order";
 const router = express.Router();
 
 router.post(
@@ -29,14 +31,22 @@ router.post(
       throw new NotFoundError();
     }
 
-    const existingOrder = await Ticket.isReserved();
+    const existingOrder = await ticket.isReserved(); // Corrected line
     if (existingOrder) {
       throw new BadRequestError("Ticket is already reserved");
     }
 
     const expiration = new Date();
-    ex
-    res.send({});
+    expiration.setSeconds(expiration.getSeconds() + 15 * 60);
+    // Build the order and save it to the database
+    const order = Order.build({
+      userId: req.currentUser!.id,
+      status: OrderStatus.Created,
+      expiresAt: expiration,
+      ticket,
+    });
+    await order.save();
+    res.status(201).send(order);
   }
 );
 

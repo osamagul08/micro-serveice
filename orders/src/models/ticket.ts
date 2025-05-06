@@ -13,7 +13,6 @@ export interface TicketDoc extends mongoose.Document {
 }
 
 interface TicketModel extends mongoose.Model<TicketDoc> {
-  isReserved(): unknown;
   build(attrs: TicketAttrs): TicketDoc;
 }
 
