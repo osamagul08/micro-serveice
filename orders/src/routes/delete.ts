@@ -5,6 +5,8 @@ import {
   NotFoundError,
   OrderStatus,
 } from "@rallycoding/common";
+import { natsWrapper } from "../nats-wrapper";
+import { OrderCancelledPublisher } from "../events/publishers/order-cancelled-publisher";
 const router = express.Router();
 
 router.delete("/api/orders/:orderId", async (req: Request, res: Response) => {
@@ -18,6 +20,14 @@ router.delete("/api/orders/:orderId", async (req: Request, res: Response) => {
   }
   order.status = OrderStatus.Cancelled;
   await order.save();
+  // Publish an event saying that an order was cancelled
+  new OrderCancelledPublisher(natsWrapper.client).publish({
+    id: order.id,
+    version: 0,
+    ticket: {
+      id: order.ticket.id,
+    },
+  });
   res.status(204).send(order);
 });
 
