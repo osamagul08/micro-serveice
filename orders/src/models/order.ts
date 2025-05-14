@@ -44,6 +44,8 @@ const orderSchema = new mongoose.Schema(
     },
   },
   {
+    versionKey: "version",
+    optimisticConcurrency: true,
     toJSON: {
       transform(doc, ret) {
         ret.id = ret._id;
