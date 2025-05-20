@@ -50,6 +50,7 @@ router.put(
       price: ticket.price,
       userId: ticket.userId,
     });
+    console.log("Ticket updated Route", ticket);
 
     res.send(ticket);
   }
