@@ -10,7 +10,6 @@ export class TicketUpdatedListener extends Listener<TicketUpdatedEvent> {
   async onMessage(data: TicketUpdatedEvent["data"], msg: Message) {
     const ticket = await Ticket.findByEvent(data);
     const ticket2 = await Ticket.findById(data.id);
-    console.log({ ticket }, { ticket2 }, { data });
     if (!ticket) {
       throw new Error("Ticket not found");
     }
