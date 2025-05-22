@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
 import Router from 'next/router';
 import useRequest from '../../hooks/use-request';
+import {
+  Container,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Alert
+} from '@mui/material';
 
 export default () => {
   const [email, setEmail] = useState('');
@@ -17,32 +26,57 @@ export default () => {
 
   const onSubmit = async event => {
     event.preventDefault();
-
     await doRequest();
   };
 
   return (
-    <form onSubmit={onSubmit}>
-      <h1>Sign In</h1>
-      <div className="form-group">
-        <label>Email Address</label>
-        <input
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          className="form-control"
-        />
-      </div>
-      <div className="form-group">
-        <label>Password</label>
-        <input
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          type="password"
-          className="form-control"
-        />
-      </div>
-      {errors}
-      <button className="btn btn-primary">Sign In</button>
-    </form>
+    <Container maxWidth="sm">
+      <Box sx={{ mt: 8, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <Paper elevation={3} sx={{ padding: 4, width: '100%' }}>
+          <Typography component="h1" variant="h4" align="center" gutterBottom>
+            Sign In
+          </Typography>
+          <Box component="form" onSubmit={onSubmit} sx={{ mt: 1 }}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+            />
+            {errors && (
+              <Alert severity="error" sx={{ mt: 2 }}>
+                {errors}
+              </Alert>
+            )}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Sign In
+            </Button>
+          </Box>
+        </Paper>
+      </Box>
+    </Container>
   );
 };
