@@ -1,19 +1,19 @@
 {
-  "name": "@rallycoding/common",
+  "name": "@usamagul/common",
   "version": "1.0.4",
-  "description": "",
+  "description": "common function and class for microserices",
   "main": "./build/index.js",
   "types": "./build/index.d.ts",
   "files": [
     "build/**/*"
   ],
   "scripts": {
-    "clean": "del ./build/*",
+    "clean": "del-cli build/*",
     "build": "npm run clean && tsc",
-    "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run build && npm publish"
+    "pub": "git add . && git commit -m \"Updates\" && npm version patch && npm run build && npm publish --access public"
   },
   "keywords": [],
-  "author": "",
+  "author": "usamagul",
   "license": "ISC",
   "devDependencies": {
     "del-cli": "^5.0.0",
