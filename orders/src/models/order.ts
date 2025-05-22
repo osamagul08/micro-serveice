@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { OrderStatus } from "@rallycoding/common";
+import { OrderStatus } from "@usamagul/common";
 import { TicketDoc } from "./ticket";
 
 export { OrderStatus };

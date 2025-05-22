@@ -7,7 +7,7 @@ import {
   NotFoundError,
   NotAuthorizedError,
   OrderStatus,
-} from "@rallycoding/common";
+} from "@usamagul/common";
 
 import { Order } from "../models/order";
 import { stripe } from "../stripe";

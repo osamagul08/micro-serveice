@@ -1,4 +1,4 @@
-import { requireAuth } from "@rallycoding/common";
+import { requireAuth } from "@usamagul/common";
 import express, { Request, Response } from "express";
 import { Order } from "../models/order";
 const router = express.Router();

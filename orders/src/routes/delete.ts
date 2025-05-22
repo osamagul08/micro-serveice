@@ -4,7 +4,7 @@ import {
   NotAuthorizedError,
   NotFoundError,
   OrderStatus,
-} from "@rallycoding/common";
+} from "@usamagul/common";
 import { natsWrapper } from "../nats-wrapper";
 import { OrderCancelledPublisher } from "../events/publishers/order-cancelled-publisher";
 const router = express.Router();

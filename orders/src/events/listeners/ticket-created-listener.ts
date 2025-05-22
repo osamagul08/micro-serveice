@@ -1,5 +1,5 @@
 import { Message } from "node-nats-streaming";
-import { Listener, Subjects, TicketCreatedEvent } from "@rallycoding/common";
+import { Listener, Subjects, TicketCreatedEvent } from "@usamagul/common";
 import { Ticket } from "../../models/ticket";
 import { queueGroupName } from "./queue-group-name";
 

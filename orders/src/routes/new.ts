@@ -6,7 +6,7 @@ import {
   OrderStatus,
   requireAuth,
   validateRequest,
-} from "@rallycoding/common";
+} from "@usamagul/common";
 import { Ticket } from "../models/ticket";
 import { body } from "express-validator";
 import { Order } from "../models/order";

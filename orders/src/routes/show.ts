@@ -2,7 +2,7 @@ import {
   NotAuthorizedError,
   NotFoundError,
   requireAuth,
-} from "@rallycoding/common";
+} from "@usamagul/common";
 import express, { Request, Response } from "express";
 import { Order } from "../models/order";
 const router = express.Router();

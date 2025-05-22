@@ -1,4 +1,4 @@
-import { OrderStatus } from "@rallycoding/common";
+import { OrderStatus } from "@usamagul/common";
 import mongoose from "mongoose";
 
 interface OrderAttrs {

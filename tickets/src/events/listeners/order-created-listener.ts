@@ -1,4 +1,4 @@
-import { Listener, OrderCreatedEvent, Subjects } from "@rallycoding/common";
+import { Listener, OrderCreatedEvent, Subjects } from "@usamagul/common";
 import { queueGroupName } from "./queue-group-name";
 import { Message } from "node-nats-streaming";
 import { Ticket } from "../../models/ticket";
