@@ -12,7 +12,7 @@ beforeAll(async () => {
   process.env.JWT_KEY = "usamagul";
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-  const mongo = await MongoMemoryServer.create();
+  mongo = await MongoMemoryServer.create();
   const mongoUri = mongo.getUri();
 
   await mongoose.connect(mongoUri, {});
@@ -46,6 +46,11 @@ global.signin = async () => {
     .expect(201);
 
   const cookie = response.get("Set-Cookie");
+
+  // Handle the case where Set-Cookie might be undefined
+  if (!cookie) {
+    throw new Error("Expected Set-Cookie header but got undefined");
+  }
 
   return cookie;
 };
