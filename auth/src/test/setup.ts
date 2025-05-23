@@ -4,16 +4,25 @@ import request from "supertest";
 import { app } from "../app";
 
 declare global {
-  var signin: () => Promise<string[]>;
+  var signin: () => Promise<any>;
 }
 
-let mongo: any;
+let mongo: any = null;
+
 beforeAll(async () => {
   process.env.JWT_KEY = "usamagul";
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-  const mongo = await MongoMemoryServer.create();
-  const mongoUri = mongo.getUri();
+  let mongoUri: string;
+
+  if (process.env.CI || process.env.MONGO_URL) {
+    // Use MongoDB service in CI
+    mongoUri = process.env.MONGO_URL || "mongodb://localhost:27017/test";
+  } else {
+    // Use MongoMemoryServer locally
+    mongo = await MongoMemoryServer.create();
+    mongoUri = mongo.getUri();
+  }
 
   await mongoose.connect(mongoUri, {});
 });
@@ -47,5 +56,5 @@ global.signin = async () => {
 
   const cookie = response.get("Set-Cookie");
 
-  return cookie;
+  return cookie || [];
 };
