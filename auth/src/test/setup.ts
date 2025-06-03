@@ -53,21 +53,14 @@ beforeEach(async () => {
   }
 
   try {
-    // Drop the entire database to ensure clean state
-    await mongoose.connection.db.dropDatabase();
-    console.log("Database dropped successfully");
-  } catch (error) {
-    console.log("Error dropping database:", error);
-    // Fallback to clearing collections
-    try {
-      const collections = await mongoose.connection.db.collections();
-      for (let collection of collections) {
-        await collection.deleteMany({});
-      }
-      console.log("Collections cleared successfully");
-    } catch (clearError) {
-      console.error("Error clearing collections:", clearError);
+    // Clear collections instead of dropping database
+    const collections = await mongoose.connection.db.collections();
+    for (let collection of collections) {
+      await collection.deleteMany({});
     }
+    console.log("Collections cleared successfully");
+  } catch (clearError) {
+    console.error("Error clearing collections:", clearError);
   }
 });
 
