@@ -9,6 +9,22 @@ declare global {
 
 let mongo: any = null;
 
+const connectWithRetry = async (mongoUri: string, maxRetries = 10) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 5000,
+      });
+      console.log("MongoDB connected successfully");
+      return;
+    } catch (error) {
+      console.log(`MongoDB connection attempt ${i + 1} failed:`, error);
+      if (i === maxRetries - 1) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+  }
+};
+
 beforeAll(async () => {
   process.env.JWT_KEY = "usamagul";
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
@@ -18,18 +34,22 @@ beforeAll(async () => {
   if (process.env.CI || process.env.MONGO_URL) {
     // Use MongoDB service in CI
     mongoUri = process.env.MONGO_URL || "mongodb://localhost:27017/test";
+    console.log("Using CI MongoDB:", mongoUri);
   } else {
-    // Use MongoMemoryServer locally
     mongo = await MongoMemoryServer.create();
     mongoUri = mongo.getUri();
+    console.log("Using MongoMemoryServer:", mongoUri);
   }
 
-  await mongoose.connect(mongoUri, {});
-});
+  await connectWithRetry(mongoUri);
+}, 30000);
 
 beforeEach(async () => {
-  const collections = await mongoose.connection.db.collections();
+  if (mongoose.connection.readyState !== 1) {
+    await mongoose.connection.asPromise();
+  }
 
+  const collections = await mongoose.connection.db.collections();
   for (let collection of collections) {
     await collection.deleteMany({});
   }
@@ -55,6 +75,5 @@ global.signin = async () => {
     .expect(201);
 
   const cookie = response.get("Set-Cookie");
-
   return cookie || [];
 };
