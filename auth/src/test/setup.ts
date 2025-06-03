@@ -67,7 +67,7 @@ afterAll(async () => {
 });
 
 global.signin = async () => {
-  const email = "test@test.com";
+  const email = "test_global@test.com";
   const password = "password";
 
   const response = await request(app)
