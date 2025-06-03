@@ -4,25 +4,58 @@ import request from "supertest";
 import { app } from "../app";
 
 declare global {
-  var signin: () => Promise<string[]>;
+  var signin: () => Promise<any>;
 }
 
-let mongo: any;
+let mongo: any = null;
+
+const connectWithRetry = async (mongoUri: string, maxRetries = 10) => {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      await mongoose.connect(mongoUri, {
+        serverSelectionTimeoutMS: 5000,
+      });
+      console.log("MongoDB connected successfully");
+      return;
+    } catch (error) {
+      console.log(`MongoDB connection attempt ${i + 1} failed:`, error);
+      if (i === maxRetries - 1) throw error;
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    }
+  }
+};
+
 beforeAll(async () => {
   process.env.JWT_KEY = "usamagul";
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
-  const mongo = await MongoMemoryServer.create();
-  const mongoUri = mongo.getUri();
+  let mongoUri: string;
 
-  await mongoose.connect(mongoUri, {});
-});
+  if (process.env.CI || process.env.MONGO_URL) {
+    mongoUri = process.env.MONGO_URL || "mongodb://localhost:27017/test";
+    console.log("Using CI MongoDB:", mongoUri);
+  } else {
+    mongo = await MongoMemoryServer.create();
+    mongoUri = mongo.getUri();
+    console.log("Using MongoMemoryServer:", mongoUri);
+  }
+
+  await connectWithRetry(mongoUri);
+}, 30000);
 
 beforeEach(async () => {
-  const collections = await mongoose.connection.db.collections();
+  if (mongoose.connection.readyState !== 1) {
+    await mongoose.connection.asPromise();
+  }
 
-  for (let collection of collections) {
-    await collection.deleteMany({});
+  try {
+    const collections = await mongoose.connection.db.collections();
+    for (let collection of collections) {
+      await collection.deleteMany({});
+    }
+    console.log("Collections cleared successfully");
+  } catch (clearError) {
+    console.error("Error clearing collections:", clearError);
   }
 });
 
@@ -46,6 +79,5 @@ global.signin = async () => {
     .expect(201);
 
   const cookie = response.get("Set-Cookie");
-
-  return cookie;
+  return cookie || [];
 };
