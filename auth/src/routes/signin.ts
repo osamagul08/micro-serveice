@@ -42,7 +42,6 @@ router.post(
       },
       process.env.JWT_KEY!
     );
-    console.log({ JWT_KEY: process.env.JWT_KEY });
 
     // Store it on session object
     req.session = {

@@ -9,7 +9,6 @@ declare global {
 
 let mongo: any = null;
 
-// Helper function to wait for MongoDB connection
 const connectWithRetry = async (mongoUri: string, maxRetries = 10) => {
   for (let i = 0; i < maxRetries; i++) {
     try {
@@ -33,27 +32,23 @@ beforeAll(async () => {
   let mongoUri: string;
 
   if (process.env.CI || process.env.MONGO_URL) {
-    // Use MongoDB service in CI
     mongoUri = process.env.MONGO_URL || "mongodb://localhost:27017/test";
     console.log("Using CI MongoDB:", mongoUri);
   } else {
-    // Use MongoMemoryServer locally
     mongo = await MongoMemoryServer.create();
     mongoUri = mongo.getUri();
     console.log("Using MongoMemoryServer:", mongoUri);
   }
 
   await connectWithRetry(mongoUri);
-}, 30000); // Increase timeout to 30 seconds
+}, 30000);
 
 beforeEach(async () => {
-  // Wait for connection to be ready
   if (mongoose.connection.readyState !== 1) {
     await mongoose.connection.asPromise();
   }
 
   try {
-    // Clear collections instead of dropping database
     const collections = await mongoose.connection.db.collections();
     for (let collection of collections) {
       await collection.deleteMany({});
